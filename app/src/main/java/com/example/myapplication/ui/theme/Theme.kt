@@ -26,15 +26,10 @@ private val LightColorScheme = lightColorScheme(
     primary = Purple40,
     secondary = PurpleGrey40,
     tertiary = Pink40,
-    background = LightBackground,
-    surface = LightSurface,
-    onPrimary = Color.White,
-    onSecondary = LightOnBackground,
-    onTertiary = LightOnBackground,
-    onBackground = LightOnBackground,
-    onSurface = LightOnSurface
 
-    /* Other default colors to override
+
+
+
     background = Color(0xFFFFFBFE),
     surface = Color(0xFFFFFBFE),
     onPrimary = Color.White,
@@ -42,7 +37,7 @@ private val LightColorScheme = lightColorScheme(
     onTertiary = Color.White,
     onBackground = Color(0xFF1C1B1F),
     onSurface = Color(0xFF1C1B1F),
-    */
+
 )
 
 @Composable
@@ -50,15 +45,15 @@ fun MyApplicationTheme(
 
     content: @Composable () -> Unit
 ) {
-    val colorScheme = LightColorScheme // Siempre usamos el esquema de color claro
+    val colorScheme = LightColorScheme
 
-    // Esta sección ajusta la barra de estado. Es útil mantenerla.
+
     val view = LocalView.current
     if (!view.isInEditMode) {
         SideEffect {
             val window = (view.context as Activity).window
             window.statusBarColor = colorScheme.background.toArgb()
-            WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = true // Siempre tema claro
+            WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = true
         }
     }
 

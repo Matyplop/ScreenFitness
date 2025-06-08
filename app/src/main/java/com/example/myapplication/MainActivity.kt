@@ -15,20 +15,19 @@ import com.example.myapplication.ui.theme.MyApplicationTheme
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        // Ya no necesitamos DataStoreManager aquí
+
 
         setContent {
-            MyApplicationTheme{ // Ya no pasamos darkTheme, siempre es tema claro
+            MyApplicationTheme{
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    // Configuración de navegación
+
                     val navController = rememberNavController()
-                    NavHost(navController = navController, startDestination = "home") {
-                        composable("home") {
-                            // Ya no necesitamos pasar dataStoreManager a HomeScreen
-                            HomeScreen()
+                    NavHost(navController = navController, startDestination = "inicio") {
+                        composable("inicio") {
+                            Inicio()
                         }
                     }
                 }

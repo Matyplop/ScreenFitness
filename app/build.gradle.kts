@@ -53,9 +53,8 @@ dependencies {
     implementation(libs.androidx.datastore.core.android)
     implementation(libs.androidx.datastore.preferences.core.android)
     implementation("androidx.navigation:navigation-compose:2.7.7")
-    implementation("com.patrykandpatryk.vico:compose:1.14.0") // Reemplaza con la última versión estable
-    implementation ("com.patrykandpatryk.vico:compose-m3:1.14.0") // Para Material 3 (si usas Material 3)
-    implementation ("com.patrykandpatryk.vico:core:1.14.0")
+    implementation("androidx.activity:activity-compose:1.8.2")
+    implementation(platform("androidx.compose:compose-bom:2024.04.01"))
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
