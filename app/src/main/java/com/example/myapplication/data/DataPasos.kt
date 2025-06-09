@@ -6,7 +6,7 @@ import com.example.myapplication.ui.theme.*
 
 data class Actividad_Data(
     val nombre: String,
-    val color: Color
+    val colores: Color
 )
 
 data class MesesActividadData(

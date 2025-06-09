@@ -21,6 +21,105 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.example.myapplication.ui.theme.awa
 
+
+
+@Composable
+fun Usuario() {
+    //row nos sirve para poder poner cosas al lado de una como el logo y el nombre
+    Row(
+        modifier = Modifier
+            .fillMaxWidth() //le decimos que ocupe todo el ancho disponible
+            .padding(16.dp), //se agrega como espacio alrededor de ella
+        verticalAlignment = Alignment.CenterVertically // centramos verticalmente , cualquier elemento
+    ) {
+        Image(
+            painter = painterResource(id = R.drawable.logo_linknet), // tu imagen debe estar en res/drawable
+            contentDescription = "Imagen de perfil",
+            modifier = Modifier.size(40.dp)
+        )
+        Spacer(modifier = Modifier.width(12.dp)) //le damos un espaciado entre la imagen y el usuario de ejemplo
+        Column {
+            //dejamos el ambos textos arriba de otro usando column
+            Text(
+                text = "Usuario Ejemplo",
+                style = MaterialTheme.typography.titleLarge,
+                fontWeight = FontWeight.Bold
+            )
+            Text(
+                text = "Perfil 1",
+                style = MaterialTheme.typography.bodyMedium
+            )
+        }
+    }
+}
+
+
+@Composable
+fun Informacion_awa() {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(16.dp),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.Center  //dejar al centro las cosas
+    ) {
+        Grafico_awa( progress = 0.68f) //llamamos al grafico_awa que está abajo el dibujo con canva
+
+        Spacer(modifier = Modifier.width(12.dp)) //le damos un espaciado
+
+        Column{
+            Text("68%", style = MaterialTheme.typography.headlineMedium, fontWeight = FontWeight.Bold)
+            Text("Agua consumida", style = MaterialTheme.typography.bodyMedium)
+        }
+
+
+
+
+    }
+}
+
+@Composable
+//
+fun Grafico_awa(progress: Float) {
+    Box(modifier = Modifier.size(50.dp), contentAlignment = Alignment.Center) {
+        //dentro de la caja modificamos el tamaño del grafico lo dejamos en 50.dp y lo alineamos al centro
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                //ocupa todo el tamaño de los 50dp que le dimos
+                .background(awa.copy(alpha = 0.15f), CircleShape)
+                //circleshape es para que sea la caja redonda.
+            //aqui llamamos a awa que es el color en Color.kt y le decimos que sea mas opaco con 0.15f ,
+        )
+        //y aqui es donde dibujamos
+        // le damos el color que empieze desde el -90 grafos
+        Canvas(modifier = Modifier.size(60.dp)) {
+            drawArc(
+                color = awa,
+                startAngle = -90f,
+                sweepAngle = 360 * progress, //le damos un progreso en este caso se lo damos en la informacion arriba
+                //pero igualmente lo multiplicamos por el total de los grados de el circulo
+                useCenter = false,
+                style = Stroke(width = 10.dp.toPx(), cap = StrokeCap.Round)
+            )
+        }
+    }
+}
+
+
+
+
+@Composable
+fun Lista_pasos(color: Color, text: String) {
+    Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.padding(vertical = 4.dp)) {
+        Box(modifier = Modifier.size(12.dp).background(color, CircleShape))
+        Spacer(modifier = Modifier.width(8.dp))
+        Text(text, style = MaterialTheme.typography.bodyMedium)
+    }
+}
+
+
+// al importar drawarc para hacer el circulo del grafico , es una libreria interna de jetpack compose
 //val es una variable que no cambia
 @Composable
 fun GraficoCircular(
@@ -63,7 +162,7 @@ fun GraficoCircular(
                 )
                 //y esto es basicamente para que cuando empieze de nuevo a dibujar el circulo no se sobreponga
                 // es para que el nuevo pedazo no se vea encima de los demas
-                    empezarDibujarCirculo += calculo + espacioenGrados
+                empezarDibujarCirculo += calculo + espacioenGrados
             }
         }
 
@@ -85,10 +184,16 @@ fun GraficoCircular(
     }
 }
 
+
+
 @Composable
 fun Inicio() {
-    var currentMonthIndex by remember { mutableStateOf(0) }
-    val currentMonth = mesesData[currentMonthIndex]
+    var mesActual by remember { mutableStateOf(mesesData.first()) }
+    //aqui guardamos el mesactual que se está mostrando
+    //mutablestateof es un estado observable
+    //variable var que es mutable osea puede cambiar
+    //y recordamos osea Quiero empezar mostrando el primer mes de la lista mesesData
+    //osea que recuerde en que mes está la pestañana cuando se va cambiando.
 
     Scaffold { padding ->
         Column(
@@ -99,9 +204,29 @@ fun Inicio() {
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            Tarjetas_componente{ Usuario() }
-            Tarjetas_componente { Informacion_awa() }
+            // Tarjeta de usuario
+            Card(
+                modifier = Modifier.fillMaxWidth(),
+                shape = RoundedCornerShape(12.dp),
+                colors = CardDefaults.cardColors(containerColor = Color.White)
+            ) {
+                Column(modifier = Modifier.padding(16.dp)) {
+                    Usuario()
+                }
+            }
 
+            // Tarjeta de agua
+            Card(
+                modifier = Modifier.fillMaxWidth(),
+                shape = RoundedCornerShape(12.dp),
+                colors = CardDefaults.cardColors(containerColor = Color.White)
+            ) {
+                Column(modifier = Modifier.padding(16.dp)) {
+                    Informacion_awa()
+                }
+            }
+
+            // Tarjeta con gráfico circular y lista de pasos
             Card(
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(12.dp),
@@ -111,20 +236,27 @@ fun Inicio() {
                     modifier = Modifier.padding(16.dp),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
+                    val currentIndex = mesesData.indexOf(mesActual)
+
+                    // Navegación de meses
                     Row(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.SpaceBetween
                     ) {
                         IconButton(onClick = {
-                            if (currentMonthIndex > 0) currentMonthIndex--
+                            if (currentIndex > 0) {
+                                mesActual = mesesData[currentIndex - 1]
+                            }
                         }) {
                             Icon(imageVector = Icons.Filled.ArrowBack, contentDescription = "Mes anterior")
                         }
 
-                        Text(currentMonth.mesesNombre, fontWeight = FontWeight.Bold)
+                        Text(mesActual.mesesNombre, fontWeight = FontWeight.Bold)
 
                         IconButton(onClick = {
-                            if (currentMonthIndex < mesesData.size - 1) currentMonthIndex++
+                            if (currentIndex < mesesData.size - 1) {
+                                mesActual = mesesData[currentIndex + 1]
+                            }
                         }) {
                             Icon(imageVector = Icons.Filled.ArrowForward, contentDescription = "Mes siguiente")
                         }
@@ -132,22 +264,24 @@ fun Inicio() {
 
                     Spacer(modifier = Modifier.height(16.dp))
 
+                    // Gráfico circular
                     GraficoCircular(
                         modificador = Modifier.size(180.dp),
-                        valor = currentMonth.actividadesMes,
-                        colores = Actividades.map { it.color }
+                        valor = mesActual.actividadesMes,
+                        colores = Actividades.map { it.colores }
                     )
 
                     Spacer(modifier = Modifier.height(16.dp))
 
+                    // Lista de pasos
                     Column(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalAlignment = Alignment.Start
                     ) {
                         for (i in Actividades.indices) {
                             Lista_pasos(
-                                color = Actividades[i].color,
-                                text = "${Actividades[i].nombre} ${currentMonth.actividadesMes[i]}k"
+                                color = Actividades[i].colores,
+                                text = "${Actividades[i].nombre} ${mesActual.actividadesMes[i]}k"
                             )
                         }
                     }
@@ -157,87 +291,9 @@ fun Inicio() {
     }
 }
 
-@Composable
-fun Tarjetas_componente(content: @Composable ColumnScope.() -> Unit) {
-    Card(
-        modifier = Modifier.fillMaxWidth(),
-        shape = RoundedCornerShape(12.dp),
-        colors = CardDefaults.cardColors(containerColor = Color.White),
-        content = content
-    )
-}
 
-@Composable
-fun Usuario() {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(16.dp),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Image(
-            painter = painterResource(id = R.drawable.logo_linknet), // tu imagen debe estar en res/drawable
-            contentDescription = "Imagen de perfil",
-            modifier = Modifier.size(40.dp)
-        )
-        Spacer(modifier = Modifier.width(12.dp))
-        Column {
-            Text(
-                text = "Usuario Ejemplo",
-                style = MaterialTheme.typography.titleLarge,
-                fontWeight = FontWeight.Bold
-            )
-            Text(
-                text = "Perfil 1",
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
-            )
-        }
-    }
-}
 
-@Composable
-fun Informacion_awa() {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(16.dp),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.Center
-    ) {
-        Grafico_awa( progress = 0.68f)
-        Spacer(modifier = Modifier.width(16.dp))
-        Text("68%", style = MaterialTheme.typography.headlineMedium, fontWeight = FontWeight.Bold)
-        Spacer(modifier = Modifier.width(8.dp))
-        Text("Agua consumida", style = MaterialTheme.typography.bodyMedium)
-    }
-}
 
-@Composable
-fun Grafico_awa(progress: Float) {
-    Box(modifier = Modifier.size(60.dp), contentAlignment = Alignment.Center) {
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(awa.copy(alpha = 0.15f), CircleShape)
-        )
-        Canvas(modifier = Modifier.size(60.dp)) {
-            drawArc(
-                color = awa,
-                startAngle = -90f,
-                sweepAngle = 360 * progress,
-                useCenter = false,
-                style = Stroke(width = 10.dp.toPx(), cap = StrokeCap.Round)
-            )
-        }
-    }
-}
 
-@Composable
-fun Lista_pasos(color: Color, text: String) {
-    Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.padding(vertical = 4.dp)) {
-        Box(modifier = Modifier.size(12.dp).background(color, CircleShape))
-        Spacer(modifier = Modifier.width(8.dp))
-        Text(text, style = MaterialTheme.typography.bodyMedium)
-    }
-}
+
+
