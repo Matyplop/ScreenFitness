@@ -3,7 +3,8 @@ package com.example.myapplication
 import androidx.compose.ui.graphics.Color
 import com.example.myapplication.ui.theme.*
 
-
+//data class nos sirve para guardar los datos.
+//ademas que vamos a usar muchas actividad_data en el otro archivo.
 data class Actividad_Data(
     val nombre: String,
     val colores: Color

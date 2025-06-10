@@ -33,7 +33,7 @@ fun Usuario() {
         verticalAlignment = Alignment.CenterVertically // centramos verticalmente , cualquier elemento
     ) {
         Image(
-            painter = painterResource(id = R.drawable.logo_linknet), // tu imagen debe estar en res/drawable
+            painter = painterResource(id = R.drawable.logo_linknet),
             contentDescription = "Imagen de perfil",
             modifier = Modifier.size(40.dp)
         )
@@ -111,6 +111,7 @@ fun Grafico_awa(progress: Float) {
 
 @Composable
 fun Lista_pasos(color: Color, text: String) {
+
     Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.padding(vertical = 4.dp)) {
         Box(modifier = Modifier.size(12.dp).background(color, CircleShape))
         Spacer(modifier = Modifier.width(8.dp))
@@ -152,7 +153,7 @@ fun GraficoCircular(
                 // para hacerle el calculo abajo
                 val calculo = (valor[i] / totalValor * gradosDisponibles).toFloat()
                 //aqui hacemos el calculo de cuantos grados ocupará en el circulo
-                //
+                //drawarc nos sirve para poder dibujar cada parte del circulo , con el color correspondiente a cada parte , que empieze con el angulo, y su calculo
                 drawArc(
                     color = colores[i],
                     startAngle = empezarDibujarCirculo,
@@ -169,7 +170,7 @@ fun GraficoCircular(
         //aqui mostramos el texto al centro de la dona con el numero total.
 
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
-            //columna ya que todo se va a mostrar de  arriba hacia abajo
+            //columna ya que todo se va a mostrar de arriba hacia abajo
             //y centramos horizontalmente
             Text(
                 text = "${totalValor}k", //insertamos una variable val dentro de un texto
@@ -195,95 +196,98 @@ fun Inicio() {
     //y recordamos osea Quiero empezar mostrando el primer mes de la lista mesesData
     //osea que recuerde en que mes está la pestañana cuando se va cambiando.
 
-    Scaffold { padding ->
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(padding)
-                .padding(16.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(16.dp)
+
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp), //margen con los bordes de la pantalla
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.spacedBy(16.dp)
+    ) {
+        // Tarjeta de usuario
+        Card(
+            modifier = Modifier.fillMaxWidth(),
+            shape = RoundedCornerShape(12.dp),
+            colors = CardDefaults.cardColors(containerColor = Color.White)
         ) {
-            // Tarjeta de usuario
-            Card(
-                modifier = Modifier.fillMaxWidth(),
-                shape = RoundedCornerShape(12.dp),
-                colors = CardDefaults.cardColors(containerColor = Color.White)
-            ) {
-                Column(modifier = Modifier.padding(16.dp)) {
-                    Usuario()
-                }
+            Column(modifier = Modifier.padding(16.dp)) {
+                Usuario()
             }
+        }
 
-            // Tarjeta de agua
-            Card(
-                modifier = Modifier.fillMaxWidth(),
-                shape = RoundedCornerShape(12.dp),
-                colors = CardDefaults.cardColors(containerColor = Color.White)
-            ) {
-                Column(modifier = Modifier.padding(16.dp)) {
-                    Informacion_awa()
-                }
+        // Tarjeta de agua
+        Card(
+            modifier = Modifier.fillMaxWidth(),
+            shape = RoundedCornerShape(12.dp),
+            colors = CardDefaults.cardColors(containerColor = Color.White)
+        ) {
+            Column(modifier = Modifier.padding(16.dp)) {
+                Informacion_awa()
             }
+        }
 
-            // Tarjeta con gráfico circular y lista de pasos
-            Card(
-                modifier = Modifier.fillMaxWidth(),
-                shape = RoundedCornerShape(12.dp),
-                colors = CardDefaults.cardColors(containerColor = Color.White)
+        // Tarjeta con gráfico circular y lista de pasos
+        Card(
+            modifier = Modifier.fillMaxWidth(),
+            shape = RoundedCornerShape(12.dp),
+            colors = CardDefaults.cardColors(containerColor = Color.White)
+        ) {
+            Column(
+                modifier = Modifier.padding(16.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Column(
-                    modifier = Modifier.padding(16.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally
+                val currentIndex = mesesData.indexOf(mesActual)
+                //currentindex guarda LA POSICION del el mes que se está mostrando en pantalla
+                //indexof es lo que nos devuelve la posicion
+
+                // Navegación de meses
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween
+                    //con spacebetween decimos que el iconbotoon este uno a la derecha y otro a la isquierda
                 ) {
-                    val currentIndex = mesesData.indexOf(mesActual)
-
-                    // Navegación de meses
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceBetween
-                    ) {
-                        IconButton(onClick = {
-                            if (currentIndex > 0) {
-                                mesActual = mesesData[currentIndex - 1]
-                            }
-                        }) {
-                            Icon(imageVector = Icons.Filled.ArrowBack, contentDescription = "Mes anterior")
+                    IconButton(onClick = {
+                        if (currentIndex > 0) {
+                            //esto es para que el usuario empiece en el primer mes y para no buscar como el indice -1
+                            mesActual = mesesData[currentIndex - 1] //logica para retroseder de mes
                         }
-
-                        Text(mesActual.mesesNombre, fontWeight = FontWeight.Bold)
-
-                        IconButton(onClick = {
-                            if (currentIndex < mesesData.size - 1) {
-                                mesActual = mesesData[currentIndex + 1]
-                            }
-                        }) {
-                            Icon(imageVector = Icons.Filled.ArrowForward, contentDescription = "Mes siguiente")
-                        }
+                    }) {
+                        Icon(imageVector = Icons.Filled.ArrowBack, contentDescription = "Mes anterior")
+                        //utilizamos un icono de flecha para volver atras con arroback con material design
                     }
 
-                    Spacer(modifier = Modifier.height(16.dp))
+                    Text(mesActual.mesesNombre, fontWeight = FontWeight.Bold)
 
-                    // Gráfico circular
-                    GraficoCircular(
-                        modificador = Modifier.size(180.dp),
-                        valor = mesActual.actividadesMes,
-                        colores = Actividades.map { it.colores }
-                    )
-
-                    Spacer(modifier = Modifier.height(16.dp))
-
-                    // Lista de pasos
-                    Column(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalAlignment = Alignment.Start
-                    ) {
-                        for (i in Actividades.indices) {
-                            Lista_pasos(
-                                color = Actividades[i].colores,
-                                text = "${Actividades[i].nombre} ${mesActual.actividadesMes[i]}k"
-                            )
+                    IconButton(onClick = {
+                        if (currentIndex < mesesData.size - 1) {
+                            mesActual = mesesData[currentIndex + 1]
                         }
+                    }) {
+                        Icon(imageVector = Icons.Filled.ArrowForward, contentDescription = "Mes siguiente")
+                    }
+                }
+
+                Spacer(modifier = Modifier.height(16.dp))
+
+                // Gráfico circular
+                GraficoCircular(
+                    modificador = Modifier.size(180.dp),
+                    valor = mesActual.actividadesMes, //AQUI LE PASAMOS EL OBJETO MESACTUAL , ES PARA QUE SEPA CADA ACTIVIDAD POR MES
+                    colores = Actividades.map { it.colores } //it colores para que solo nos pase los colores de las actividades
+                )
+
+                Spacer(modifier = Modifier.height(16.dp))
+
+                // Lista de pasos
+                Column(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalAlignment = Alignment.Start
+                ) {
+                    for (i in Actividades.indices) {
+                        Lista_pasos(
+                            color = Actividades[i].colores,
+                            text = "${Actividades[i].nombre} ${mesActual.actividadesMes[i]}k"
+                        )
                     }
                 }
             }
